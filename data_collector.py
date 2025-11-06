@@ -4,24 +4,27 @@ import csv
 import os
 from datetime import datetime
 
-CSV_FILE = "iss_data.csv"
+# Create a folder to store CSVs
+DATA_FOLDER = "data"
+os.makedirs(DATA_FOLDER, exist_ok=True)
 
-# If file doesn't exist, create and write headers
-if not os.path.exists(CSV_FILE):
-    with open(CSV_FILE, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["latitude", "longitude", "altitude", "timestamp"])
+# CSV file name includes timestamp to make it unique
+CSV_FILE = os.path.join(DATA_FOLDER, f"iss_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
 
-print("Starting ISS data acquisition...")
+# Create CSV and write headers
+with open(CSV_FILE, "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["latitude", "longitude", "altitude", "timestamp"])
+
+print(f"Starting ISS data acquisition, saving to {CSV_FILE}...")
 
 while True:
     try:
         response = requests.get("https://api.wheretheiss.at/v1/satellites/25544", timeout=10)
-        response.raise_for_status()  # raise exception if status code not 200
+        response.raise_for_status()
         data = response.json()
         row = [data['latitude'], data['longitude'], data['altitude'], data['timestamp']]
 
-        # Append row to CSV
         with open(CSV_FILE, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(row)
@@ -33,4 +36,4 @@ while True:
     except Exception as e:
         print(f"{datetime.now()} - Other error: {e}")
 
-    time.sleep(60)  # Wait 1 minute before next fetch
+    time.sleep(60)
