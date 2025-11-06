@@ -29,7 +29,7 @@ while True:
             writer = csv.writer(f)
             writer.writerow(row)
 
-        print(f"{datetime.now()} - Saved row: {row}")
+        print(f"{datetime.now()} - Saved row: {row}", flush=True)
 
     except requests.exceptions.RequestException as e:
         print(f"{datetime.now()} - Request error: {e}")
@@ -37,3 +37,4 @@ while True:
         print(f"{datetime.now()} - Other error: {e}")
 
     time.sleep(60)
+
