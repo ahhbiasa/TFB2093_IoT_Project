@@ -1,7 +1,7 @@
-# Load necessary library
+# Sample_extraction.R
+# This script cleans the ISS csv data by removing specific dates and samples 50% of the remaining data for each day.
 library(dplyr)
 
-# Load data
 data <- read.csv("iss_data_3days.csv")
 
 # Parse collected_at explicitly as UTC
