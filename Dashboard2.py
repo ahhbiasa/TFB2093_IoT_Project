@@ -195,10 +195,6 @@ def main():
             st.metric("Latitude", f"{latest_position['latitude']:.4f}°")
             st.metric("Longitude", f"{latest_position['longitude']:.4f}°")
             st.metric("Altitude", f"{latest_position['altitude']:.2f} km")
-            
-            st.markdown("### 📈 Quick Stats")
-            st.write(f"Total data points: {len(filtered_df)}")
-            st.write(f"Altitude range: {filtered_df['altitude'].min():.2f} - {filtered_df['altitude'].max():.2f} km")
         else:
             st.warning("No position data available.")
     
@@ -240,6 +236,27 @@ def main():
         with col4:
             max_speed = filtered_df['altitude'].max()
             st.metric("Max Altitude", f"{max_speed:.2f} km")
+
+        # Daily Data Points Bar Chart
+        st.markdown("### 📊 Data Points Per Day")
+        daily_counts = filtered_df.groupby(filtered_df['collected_at'].dt.date).size().reset_index()
+        daily_counts.columns = ['Date', 'Data Points']
+        
+        fig_bar = px.bar(
+            daily_counts,
+            x='Date',
+            y='Data Points',
+            title='Number of Data Points Collected Each Day',
+            labels={'Date': 'Date', 'Data Points': 'Number of Data Points'},
+            color='Data Points',
+            color_continuous_scale='blues'
+        )
+        fig_bar.update_layout(
+            xaxis_title='Date',
+            yaxis_title='Number of Data Points',
+            showlegend=False
+        )
+        st.plotly_chart(fig_bar, use_container_width=True)
     
     else:
         st.warning("No data available for visualization with current filters.")
